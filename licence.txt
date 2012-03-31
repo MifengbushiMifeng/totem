@@ -1,0 +1,5 @@
+TOTEM is licensed under the GPL (GNU General Public licence) version 2.0.
+
+You can find a copy of this license in licence/GPL_licence.txt.
+
+-- Jean Lepropre (lepropre@run.montefiore.ulg.ac.be)

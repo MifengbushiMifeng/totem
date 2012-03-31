@@ -1,0 +1,126 @@
+	       TOTEM Project
+	       *************
+
+		README FILE
+		===========
+
+Read this first to get started!
+
+Author: Fabian Skivée (skivee@run.montefiore.ulg.ac.be)
+Contributors:
+    - Olivier Delcourt (delcourt@run.montefiore.ulg.ac.be)
+    - Jean Lepropre (lepropre@run.montefiore.ulg.ac.be)
+
+Table of contents
+-----------------
+
+	1. General information
+	2. Installing
+	3. Using the toolbox
+	4. Directory structure
+
+
+1. General information
+----------------------
+
+TOTEM is a TOolbox for Traffic Engineering Methods. It includes
+several traffic engineering algorithms written by different
+persons. You can find more details about integrated algorithms and
+their authors at
+http://totem.run.montefiore.ulg.ac.be/developers.html.
+
+TOTEM is being developed by:
+    - Simon Balon (balon@run.montefiore.ulg.ac.be)
+    - Jean Lepropre (lepropre@run.montefiore.ulg.ac.be)
+    - Gaël Monfort (monfort@run.montefiore.ulg.ac.be)
+
+Former developers:
+    - Olivier Delcourt (delcourt@run.montefiore.ulg.ac.be)
+    - Fabian Skivée (skivee@run.montefiore.ulg.ac.be)
+
+Olivier Materne developed the basics of the graphical user interface.
+Thomas Vanstals developed the integration of C-BGP in the graphical
+user interface.
+
+
+2. Installing
+-------------
+
+  - Download a Java Virtual Machine. You need J2SE 1.5
+    (http://java.sun.com). Install the JVM, add the bin directory to
+    your path and set the JAVA_HOME environement variable. With bash:
+
+	export PATH=[JAVA-DIR]/bin:$PATH
+	export JAVA_HOME=[JAVA-DIR]
+
+  - Download the build tool Ant from the apache
+    project. (http://ant.apache.org). We have tested Ant 1.5.4 and Ant
+    1.6.1. Decompress the archive, add the bin directory to your PATH
+    and set the ANT_HOME variable.
+
+	export PATH=[ANT-DIR]/bin:$PATH
+	export ANT_HOME=[ANT-DIR]
+
+  - Decompress the TOTEM archive 
+
+	tar -xzvf totem-<version>.tar.gz
+
+  - Add Junit.jar to your CLASSPATH (only for compiling and executing
+    the tests)
+
+	export CLASSPATH=[TOTEM-DIR]/lib/java/junit.jar:$CLASSPATH
+
+
+3. Using the toolbox
+--------------------
+
+To compile the toolbox, type in [TOTEM-DIR]
+   ant clean build
+
+Then 
+     ./totem.sh: start the GUI
+     ./totem.sh -help: for getting the CLI usage
+
+The following ant targets are also useful:
+
+    - ant doc: to generate the JavaDoc documentation
+	
+*** WARNING: the first time, USE ant clean to create the directory
+structure! ***
+
+
+4. Directory structure
+----------------------
+
+The directories are organized as follows:
+
+	- doc: the JavaDoc documentation
+	- documentation: documentation of the toolbox and some of its
+          integrated tools
+	- lib: the libraries needed by the project
+	- src: source files of the project
+	- examples: scenarios, topologies and traffic matrices examples
+	- licence: licences related things
+
+
+5. Libraries dependency
+-----------------------
+
+TOTEM depends on the following libraries: Brite, catalina-ant, C-BGP,
+Jakarta Commons Java Collections Framework, Colt, epsgraphics, jax-qname, JAXB,
+JCommmon, JFreeChart, JGraphT, Jung, JUnit, Log4J, relaxngDataType, xsdlib and
+mt19937ar (used by IGPWO).
+
+The licence of each library is specified in the licence directory.
+
+
+6. Scenario examples
+--------------------
+
+Examples of scenarios that can be run directly using "totem.sh -s
+<scenario.xml>" can be found in the examples directory.
+
+
+-- Jean Lepropre (lepropre@run.montefiore.ulg.ac.be)
+
+-- Last modified: Fri Apr 07, 2006

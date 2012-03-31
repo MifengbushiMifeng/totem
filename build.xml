@@ -1,0 +1,669 @@
+<?xml version="1.0"?>
+
+<project name="totem" default="build" basedir="." >
+    <property file="build.properties"/>
+    <property environment="env"/>
+    <loadfile property="licence" srcfile="${resources.dir}/src-licence.txt" />
+    
+    <path id="compile.classpath">
+        <pathelement location="${jaxb-api.jar}"/>
+        <pathelement location="${jaxb-impl.jar}"/>
+        <pathelement location="${jaxb-libs.jar}"/>
+        <pathelement location="${jaxb-xjc.jar}"/>
+        <pathelement location="${relaxngDatatype.jar}"/>
+        <pathelement location="${jax-qname.jar}"/>
+        <pathelement location="${xsdlib.jar}"/>
+        <pathelement location="${jgrapht.jar}"/>
+        <pathelement location="${log4j.jar}"/>
+        <pathelement location="${brite.jar}"/>
+        <pathelement location="${catalina-ant.jar}"/>
+        <pathelement location="${jcommon.jar}"/>
+        <pathelement location="${jfreechart.jar}"/>
+        <pathelement location="${jakarta-commons.jar}"/>
+        <pathelement location="${jung.jar}"/>
+        <pathelement location="${cbgp.jar}" />
+        <pathelement location="${epsgraphics.jar}"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${colt.jar}"/>
+        <pathelement location="${jrobin.jar}"/>
+    </path>
+    
+    <path id="test.classpath">
+        <pathelement location="${jaxb-api.jar}"/>
+        <pathelement location="${jaxb-impl.jar}"/>
+        <pathelement location="${jaxb-libs.jar}"/>
+        <pathelement location="${log4j.jar}"/>
+        <pathelement location="${brite.jar}"/>
+        <pathelement location="${totem.jar}"/>
+        <pathelement location="${catalina-ant.jar}"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${cbgp.jar}" />
+    </path>
+    
+    <path id="run.test.classpath">
+        <pathelement location="${jaxb-api.jar}"/>
+        <pathelement location="${jaxb-impl.jar}"/>
+        <pathelement location="${jaxb-libs.jar}"/>
+        <pathelement location="${jax-qname.jar}"/>
+        <pathelement location="${xsdlib.jar}"/>
+        <pathelement location="${totem.jar}"/>
+        <pathelement location="${jgrapht.jar}"/>
+        <pathelement location="${projectTest.jar}"/>
+        <pathelement location="${log4j.jar}"/>
+        <pathelement location="${brite.jar}"/>
+        <pathelement location="${catalina-ant.jar}"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${jcommon.jar}"/>
+        <pathelement location="${jfreechart.jar}"/>
+        <pathelement location="${cbgp.jar}"/>
+    </path>
+
+    <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+        <classpath refid="compile.classpath" />
+    </taskdef>
+    
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${ant-contrib.jar}"/>
+        </classpath>
+    </taskdef>
+    
+    <!-- =================================================================== -->
+    <!-- Prepares the build directory and and cleans work dir		         -->
+    <!-- =================================================================== -->
+    <target name="init" description="Initialize the directory structure for the build process">
+        <tstamp>
+            <format property="test.time" pattern="ddMMyy-hh:mm:ss"/>
+        </tstamp>
+    </target>
+    
+    <target name="update">
+        <cvs command="update -P -d"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Prepares the build directory and and cleans work dir		         -->
+    <!-- =================================================================== -->
+    <target name="init-release" description="Initialize the directory structure for the build process">
+        <tstamp>
+            <format property="test.time" pattern="ddMMyy-hh:mm:ss"/>
+        </tstamp>
+        <copy todir="${src.build.dir}">
+            <fileset dir="src/java" excludes="${release.exclude}">
+                <include name="**/*.java" />
+                <include name="**/*.ser"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.txt"/>
+                <include name="**/*.html"/>
+                 
+                <include name="**/MANIFEST.MF"/>
+            </fileset>
+            <filterset>
+                <filter token="VERSION" value="${version}" />
+                <filter token="DATE" value="${TODAY}"/>
+                <filter token="LICENCE" value="${licence}" />
+            </filterset>
+        </copy>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Compile the project                                		         -->
+    <!-- =================================================================== -->
+    <target name="compile-service" depends="init"
+        description="Compiles the server-side source code">
+        <echo message="Compiling the server-side source code...."/>
+        
+        <!--
+        <javac deprecation="on"
+            srcdir="${src.dir}"
+            destdir="${classes.build.dir}"
+            includes="be/ac/ucl/poms/**, be/ac/ulg/montefiore/run/totem/**, be/ac/ucl/ingi/**"
+	        debug="on"
+	    encoding="ISO8859-1">
+            <classpath refid="compile.classpath"/>
+        </javac>
+        -->
+        
+        <javac deprecation="on"
+            srcdir="${src.dir}"
+            destdir="${classes.build.dir}"
+        	excludes="test/**,${plugins.exclude}"
+            debug="on"
+	        encoding="ISO8859-1"
+            source="1.5"
+            nowarn="on">
+            <!--<compilerarg value="-Xlint:unchecked"/>-->
+            <compilerarg value="-Xlint:none"/>
+            <compilerarg value="-nowarn"/>
+            <classpath refid="compile.classpath"/>
+        </javac>
+        
+        <!-- Copy src properties files -->
+        <copy todir="${classes.build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.ser"/>
+                <include name="**/*.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${classes.build.dir}/resources" file="src/resources/log4j.xml"/>
+        <copy todir="${classes.build.dir}/resources" file="src/resources/preferences.xml"/>
+        <copy todir="${classes.build.dir}/resources/modelAMPL" file="src/resources/modelAMPL/mcf-min-maxUtil.mod"/>
+        <copy todir="${classes.build.dir}/resources/modelAMPL" file="src/resources/modelAMPL/MplsRouting.mod"/>
+        <copy todir="${classes.build.dir}/resources/modelAMPL" file="src/resources/modelAMPL/fastipmetric.mod"/>
+        <copy todir="${classes.build.dir}/resources/domain" file="${domain-schema}"/>
+        <copy todir="${classes.build.dir}/resources/scenario" file="${scenario-schema}"/>
+        <copy todir="${classes.build.dir}/resources/trafficMatrix" file="${trafficMatrix-schema}"/>
+        <copy todir="${classes.build.dir}/resources/TOTEM-base" file="${totem-base-schema}"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/icon.gif"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/expandall.gif"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/collapseall.gif"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/stock_calc-accept.gif"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/stock_calc-cancel.gif"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Compile the project                                		         -->
+    <!-- =================================================================== -->
+    <target name="compile-release" depends="init-release"
+        description="Compiles the server-side source code">
+        <echo message="Compiling the server-side source code...."/>
+        
+        <javac deprecation="on"
+            srcdir="${src.build.dir}"
+            destdir="${classes.build.dir}"
+            includes="**"
+            excludes="${plugins.exclude}"
+            debug="on"
+            encoding="ISO8859-1">
+            <!-- <compilerarg value="-Xlint:unchecked"/>   -->
+            <classpath refid="compile.classpath"/>
+        </javac>
+        
+        <!-- Copy src properties files -->
+        <copy todir="${classes.build.dir}">
+            <fileset dir="${src.build.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.ser"/>
+                <include name="**/*.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${classes.build.dir}/resources" file="src/resources/log4j.xml"/>
+        <copy todir="${classes.build.dir}/resources" file="src/resources/preferences.xml"/>
+        <copy todir="${classes.build.dir}/resources/modelAMPL" file="src/resources/modelAMPL/mcf-min-maxUtil.mod"/>
+        <copy todir="${classes.build.dir}/resources/modelAMPL" file="src/resources/modelAMPL/MplsRouting.mod"/>
+        <copy todir="${classes.build.dir}/resources/modelAMPL" file="src/resources/modelAMPL/fastipmetric.mod"/>
+        <copy todir="${classes.build.dir}/resources/domain" file="${domain-schema}"/>
+        <copy todir="${classes.build.dir}/resources/scenario" file="${scenario-schema}"/>
+        <copy todir="${classes.build.dir}/resources/trafficMatrix" file="${trafficMatrix-schema}"/>
+        <copy todir="${classes.build.dir}/resources/TOTEM-base" file="${totem-base-schema}"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/icon.gif"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/expandall.gif"/>
+        <copy todir="${classes.build.dir}/resources/img" file="src/resources/img/collapseall.gif"/>
+	<copy todir="${classes.build.dir}/resources/img" file="src/resources/img/stock_calc-accept.gif"/>
+	<copy todir="${classes.build.dir}/resources/img" file="src/resources/img/stock_calc-cancel.gif"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Clean                               		         -->
+    <!-- =================================================================== -->
+    <target name="clean"
+        description="Removes the build directory">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+        <mkdir  dir="${build.dir}"/>
+        <mkdir  dir="${src.build.dir}"/>
+        <mkdir  dir="${classes.build.dir}"/>
+        <mkdir dir="${dist.dir}" />
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Build the project                                		         -->
+    <!-- =================================================================== -->
+    <target name="build" depends="compile-service">
+        <jar jarfile="${totem.jar}"
+            basedir="${classes.build.dir}"
+            manifest="${resources.dir}/META-INF/${manifest}"
+            />
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Build the Socket interface client                                   -->
+    <!-- =================================================================== -->
+    <target name="build-socketclient" depends="compile-service">
+        <jar jarfile="${socketclient.jar}"
+            basedir="${classes.build.dir}"
+            manifest="${resources.dir}/META-INF/${socketmanifest}"
+            />
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Build the Topology server                                           -->
+    <!-- =================================================================== -->
+    <target name="build-toposerver">
+        <javac deprecation="on"
+            srcdir="${src.dir}"
+            includes="${toposerver.file}"
+            destdir="${classes.build.dir}"
+            debug="on"
+            encoding="ISO8859-1">
+            <classpath refid="compile.classpath"/>
+        </javac>
+        
+        <jar jarfile="${toposerver.jar}"
+            basedir="${classes.build.dir}"
+            includes="**/TopologyServer.class"
+            manifest="${resources.dir}/META-INF/${toposervermanifest}"
+            />
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Build the project                                		         -->
+    <!-- =================================================================== -->
+    <target name="build-release" depends="compile-release">
+        <jar jarfile="${totem.jar}"
+            basedir="${classes.build.dir}"
+            manifest="${resources.dir}/META-INF/${manifest}"
+            />
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Create the Domain schema binding                                    -->
+    <!-- =================================================================== -->
+    <target name="bindDomainSchema" description="Binding Domain schema">
+        <!-- generate the Java content classes from the schema -->
+        <echo message="Binding the schema..."/>
+        <xjc schema="${domain-schema}" target="${src.dir}" binding="${domain-bindings}" extension="true">
+            <arg line="-use-runtime be.ac.ulg.montefiore.run.totem.util.jaxb.runtime"/>
+        </xjc>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Create the Scenario schema binding		                             -->
+    <!-- =================================================================== -->
+    <target name="bindScenarioSchema" description="Binding Scenario schema">
+        <!-- generate the Java content classes from the schema -->
+        <echo message="Binding the schema..."/>
+        <xjc schema="${scenario-schema}" target="${src.dir}" binding="${scenario-bindings}" extension="true">
+            <arg line="-use-runtime be.ac.ulg.montefiore.run.totem.util.jaxb.runtime"/>
+        </xjc>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Create the TrafficMatrix schema binding		                     -->
+    <!-- =================================================================== -->
+    <target name="bindTrafficMatrixSchema" description="Binding TrafficMatrix schema">
+        <!-- generate the Java content classes from the schema -->
+        <echo message="Binding the schema..."/>
+        <xjc schema="${trafficMatrix-schema}" target="${src.dir}" binding="${trafficMatrix-bindings}">
+            <arg line="-use-runtime be.ac.ulg.montefiore.run.totem.util.jaxb.runtime"/>
+        </xjc>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Create the TOTEM-base schema binding			                     -->
+    <!-- =================================================================== -->
+    <target name="bindTOTEMBaseSchema" description="Binding TOTEM-base schema">
+        <!-- generate the Java content classes from the schema -->
+        <echo message="Binding the schema..."/>
+        <xjc schema="${totem-base-schema}" target="${src.dir}" binding="${totem-base-bindings}">
+            <arg line="-use-runtime be.ac.ulg.montefiore.run.totem.util.jaxb.runtime"/>
+        </xjc>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Create a given Scenario schema binding                              -->
+    <!-- =================================================================== -->
+    <target name="bindGivenScenarioSchema" description="Binding a given Scenario schema">
+        <fail unless="schema" message="Set the schema property when calling this task!"/>
+        <fail unless="schema.jaxb.dir" message="Set the schema.jaxb.dir property when calling this task!"/>
+        
+        <delete dir="${tmp.schema.dir}"/>
+        <mkdir  dir="${tmp.schema.dir}"/>
+        <!-- generate the Java content classes from the schema -->
+        <echo>Binding ${schema}.xsd...</echo>
+        <xjc schema="${schema}.xsd" target="${tmp.schema.dir}" binding="${schema}-bindings.xjb" extension="true">
+            <arg line="-use-runtime be.ac.ulg.montefiore.run.totem.util.jaxb.runtime"/>
+        </xjc>
+        
+        <!-- Need to replace the version number to deal with the runtime classes in totem -->
+        <!--
+        <replace dir="${tmp.schema.dir}${samte.jaxb.dir}/impl" value="@@JAXB_VERSION@@">
+            <include name="**/*.java"/>
+            <replacetoken><![CDATA[1.0.4]]></replacetoken>
+        </replace>
+        -->
+        
+        <!-- Copy the needed classes in the correct scenario directory -->
+        <copy todir="${src.dir}${schema.jaxb.dir}">
+            <fileset dir="${tmp.schema.dir}${schema.jaxb.dir}">
+                <include name="**/*.java"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.ser"/>
+            </fileset>
+        </copy>
+        <delete dir="${tmp.schema.dir}"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Build and execute the JUnit tests                                   -->
+    <!-- =================================================================== -->
+    <target name="test" depends="build" description="Build the Junit tests, execute them and generate a report">
+        <!-- compile the project -->
+        <javac deprecation="on"
+            srcdir="${test.src.dir}"
+            destdir="${build.dir}"
+	        encoding="ISO8859-1">
+            <classpath refid="test.classpath"/>
+        </javac>
+        <copy todir="${build.dir}/resources/junit-test">
+            <fileset dir="${resources.dir}/junit-test"/>
+        </copy>
+        
+        <!-- make test jar  -->
+        <jar jarfile="${projectTest.jar}"
+            basedir="${build.dir}"
+            manifest="${resources.dir}/META-INF/MANIFEST_TEST.MF"/>
+        
+        <!-- Execute the tests and generate a report -->
+        <junit printsummary="on" fork="yes" haltonfailure="no" maxmemory="512m">
+            <classpath refid="run.test.classpath"/> 
+            <formatter type="plain"/>
+            <env key="LD_LIBRARY_PATH" value="${env.LD_LIBRARY_PATH}:${run.lib.dir}"/>  
+            <jvmarg value="-Djava.ext.dirs=${run.ext.dirs}"/>
+            <jvmarg value="-Djava.library.path=${run.lib.dir}"/>
+            <test name="test.AllTest"/> 
+            <test name="be.ac.ucl.ingi.cbgp.testing.AllTests"/>
+        </junit>
+    </target>
+
+    
+    <!-- =================================================================== -->
+    <!-- Generate the javadoc                                        -->
+    <!-- =================================================================== -->
+    <target name="doc" description="Generate the javadoc">
+        <!-- generate the javadocs from the content classes -->
+        <mkdir dir="${doc.dir}/api"/>
+        <javadoc packagenames="*"
+            maxmemory="512m"
+            sourcepath="src/java"
+            defaultexcludes="yes"
+            destdir="${doc.dir}"
+            author="true"
+            version="true"
+            use="true"
+            overview="${src.dir}/overview.html"
+            windowtitle="TOTEM documentation">
+            <classpath refid="compile.classpath" />
+            <doctitle><![CDATA[<h1>TOTEM project</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2004-2007 Research Unit in Networking, All Rights Reserved.</i>]]></bottom>
+            <tag name="todo" scope="all" description="To do:"/>
+        </javadoc>
+    </target>
+    
+    <target name="make-jnlp">
+        <delete dir="files"/>
+        <mkdir dir="files"/>
+        <copy todir="files">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+            <fileset dir="${dist.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+        <signjar jar="files/relaxngDatatype.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/log4j-1.2.8.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/Brite_modified.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/jcommon-0.9.6.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/jgrapht-0.5.2.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/jfreechart-0.9.21.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/commons-collections-3.1.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/jung-1.5.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+        <signjar jar="files/totem-${version}.jar" alias="run" keystore=".keystore" storepass="lmdpdreal"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Make a release                                     		         -->
+    <!-- =================================================================== -->
+    <target name="make-release" depends="build-release">
+        <echo message="Make the release..."/>
+        <tar destfile="release/totem-${version}-bin.tar.gz" compression="gzip">
+            <tarfileset dir="." prefix="totem" mode="755">
+                <include name="**/totem.sh"/>
+            </tarfileset>
+            <tarfileset dir="." prefix="totem">
+                <include name="README"/>
+                <include name="Changelog"/>
+                <include name="**/licence.txt"/>
+            </tarfileset>
+            <tarfileset dir="documentation" prefix="totem/documentation">
+                <include name="DAMOTE_documentation.pdf"/>
+            </tarfileset>
+            <tarfileset dir="documentation/UserGuide" prefix="totem/documentation">
+                <include name="TOTEM-${version}-UserGuide.pdf"/>
+            </tarfileset>
+            <tarfileset dir="documentation/brochure" prefix="totem/documentation">
+                <include name="brochure-TOTEM-v${brochure.version}.pdf"/>
+            </tarfileset>
+            
+            <!--<tarfileset dir="lib/java" prefix="totem/lib/java"/>-->
+            <tarfileset dir="lib" prefix="totem/lib">
+                <exclude name="**/notes.txt"/>
+                <exclude name="**/ant-contrib-*.jar"/>
+            </tarfileset>
+            <tarfileset dir="licence" prefix="totem/licence"/>
+            <tarfileset dir="${dist.dir}" prefix="totem/dist"/>
+            <tarfileset dir="examples" prefix="totem/examples"/>
+            <!--
+            <tarfileset dir="src/perl/bgp" prefix="totem/src/perl/bgp"/>
+            <tarfileset dir="src/perl/netflow" prefix="totem/src/perl/netflow"/>
+            -->
+        </tar>
+        <tar destfile="release/totem-${version}-src.tar.gz" compression="gzip" longfile="gnu">
+            <tarfileset dir="." prefix="totem" mode="755">
+                <include name="**/totem.sh"/>
+                <include name="**/socketclient.sh"/>
+                <include name="**/toposerver.sh"/>
+            </tarfileset>
+            <tarfileset dir="." prefix="totem">
+                <include name="README"/>
+                <include name="Changelog"/>
+                <include name="**/licence.txt"/>
+                <include name="**/build.xml"/>
+                <include name="**/build.properties"/>
+            </tarfileset>
+            <tarfileset dir="documentation" prefix="totem/documentation">
+                <include name="DAMOTE_documentation.pdf"/>
+            </tarfileset>
+            <tarfileset dir="documentation/UserGuide" prefix="totem/documentation">
+                <include name="TOTEM-${version}-UserGuide.pdf"/>
+            </tarfileset>
+            <tarfileset dir="documentation/brochure" prefix="totem/documentation">
+                <include name="brochure-TOTEM-v${brochure.version}.pdf"/>
+            </tarfileset>
+            
+            <!--<tarfileset dir="lib/java" prefix="totem/lib/java"/>-->
+            <tarfileset dir="lib" prefix="totem/lib">
+                <exclude name="**/notes.txt"/>
+            </tarfileset>
+            <tarfileset dir="licence" prefix="totem/licence"/>
+            <tarfileset dir="${resources.dir}" prefix="totem/${resources.dir}">
+                <exclude name="**/MANIFEST_UCL_*"/>
+                <exclude name="**/*.jnlp"/>
+            </tarfileset>
+            <tarfileset dir="${src.build.dir}" prefix="totem/src/java"/>
+            <tarfileset dir="examples" prefix="totem/examples"/>
+            <tarfileset dir="src/perl/bgp" prefix="totem/src/perl/bgp"/>
+            <tarfileset dir="src/perl/netflow" prefix="totem/src/perl/netflow"/>
+        </tar>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Plugins' specific tasks                                             -->
+    <!-- =================================================================== -->
+    
+    <!-- =================================================================== -->
+    <!-- To build a plugin                                                   -->
+    <!-- =================================================================== -->
+    <target name="build-given-plugin" depends="init">
+        <echo message="Checking properties and files for build-given-plugin..."/>
+        <!-- Check whether "plugin" property, totem JAR and manifest files are present -->
+        <fail unless="plugin" message="Set the plugin property when calling this task!"/>
+        
+        <fail if="totem.jar.present" message="The totem.jar.present property already exists!"/>
+        <available file="${totem.jar}" property="totem.jar.present"/>
+        <fail unless="totem.jar.present" message="The totem JAR file does not exist!"/>
+        
+        <fail if="manifest.plugin.present" message="The manifest.plugin.present property already exists!"/>
+        <available file="${src.dir}/${plugin}/META-INF/MANIFEST.MF" property="manifest.plugin.present"/>
+        <fail unless="manifest.plugin.present" message="No manifest found for the plugin!"/>
+        
+        <!-- build plugin's name from "plugin" property -->
+        <fail if="plugin.name" message="The plugin.name property already exists!"/>
+        <echo message="Building plugin's name from 'plugin' property"/>
+        <propertyregex property="plugin.name"
+	              input="${plugin}"
+	              regexp="^*/([^/]*)(?:(?:/$)|(?:$))"
+	              select="\1"
+	              casesensitive="true"/>
+        <echo message="Plugin's name is ${plugin.name}"/>
+        
+        <!-- init plugin tmp dir -->
+        <delete dir="${tmp.plugin.dir}"/>
+        <mkdir  dir="${tmp.plugin.dir}"/>
+        
+        <!-- Compile src files -->
+        <echo message="Compile plugin's files..."/>
+        
+        <!-- Sets default value for plugin library  -->
+        <condition property="plugin.lib" value="">
+            <not>
+                <isset property="plugin.lib"/>
+            </not>
+        </condition>
+        
+        <javac deprecation="on"
+            srcdir="${src.dir}/${plugin}"
+            destdir="${tmp.plugin.dir}"
+	        encoding="ISO8859-1">
+            <classpath>
+                <pathelement path="${totem.jar}"/>
+                <fileset dir="${lib.dir}">
+                    <include name="**/*.jar"/>
+                </fileset>
+                <pathelement path="${plugin.lib}"/>
+            </classpath>
+        </javac>
+        
+        <!-- Copy src properties files -->
+        <echo message="Copy properties files..."/>
+        <copy todir="${tmp.plugin.dir}">
+            <fileset dir="${src.dir}">
+                <include name="${plugin}/**/*.properties"/>
+                <include name="${plugin}/**/*.ser"/>
+                <include name="${plugin}/**/*.txt"/>
+            </fileset>
+        </copy>
+        
+        <!-- Build jar -->
+        <if>
+            <isset property="plugin.version"/>
+            <then>
+                <jar jarfile="${lib.dir}/${plugin.name}-${plugin.version}.jar"
+	            basedir="${tmp.plugin.dir}"
+	            manifest="${src.dir}/${plugin}/META-INF/MANIFEST.MF"/>
+                <echo message="JAR file built in ${lib.dir}/${plugin.name}-${plugin.version}.jar"/>
+            </then>
+            <else>
+                <jar jarfile="${lib.dir}/${plugin.name}.jar"
+	            basedir="${tmp.plugin.dir}"
+	            manifest="${src.dir}/${plugin}/META-INF/MANIFEST.MF"/>
+                <echo message="JAR file built in ${lib.dir}/${plugin.name}.jar"/>
+            </else>
+        </if>
+        
+        <!-- clean plugin tmp dir -->
+        <delete dir="${tmp.plugin.dir}"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- To make a release for a plugin                                      -->
+    <!-- =================================================================== -->
+    <target name="make-given-plugin-release">
+        <echo message="Checking properties and files for make-given-plugin-release..."/>
+        <fail unless="plugin.version" message="Set the plugin.version property when calling this task!"/>
+        <if>
+            <not>
+                <isset property="plugin.licence.file"/>
+            </not>
+            <then>
+                <echo message="Property plugin.licence.file not set, using TOTEM licence by default"/>
+                <property name="plugin.licence" value="${licence}"/>
+            </then>
+            <else>
+                <echo message="Loading plugin's licence file from ${plugin.licence.file}..."/>
+                <loadfile property="plugin.licence" srcfile="${plugin.licence.file}"/>
+            </else>
+        </if>
+        
+        <echo message="Calling build-given-plugin..."/>
+        <antcall target="build-given-plugin"/>
+        
+        <!-- build plugin's name from "plugin" property -->
+        <fail if="plugin.name" message="The plugin.name property already exists!"/>
+        <echo message="Building plugin's name from 'plugin' property"/>
+        <propertyregex property="plugin.name"
+	              input="${plugin}"
+	              regexp="^*/([^/]*)(?:(?:/$)|(?:$))"
+	              select="\1"
+	              casesensitive="true"/>
+        <echo message="Plugin's name is ${plugin.name}"/>
+        
+        <!-- JAR file built in build-given-plugin, we just have to build src archive -->
+        
+        <!-- init plugin tmp dir -->
+        <delete dir="${tmp.plugin.dir}"/>
+        <mkdir  dir="${tmp.plugin.dir}"/>
+        
+        <tstamp>
+            <format property="test.time" pattern="ddMMyy-hh:mm:ss"/>
+        </tstamp>
+        <!-- Copy src files into tmp-plugin dir -->
+        <copy todir="${tmp.plugin.dir}">
+            <fileset dir="${src.dir}/${plugin}">
+                <include name="**/*.java" />
+                <include name="**/*.ser"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.txt"/>
+                <include name="**/*.html"/>
+                <include name="**/MANIFEST.MF"/>
+            </fileset>
+            <filterset>
+                <filter token="VERSION" value="${plugin.version}" />
+                <filter token="DATE" value="${TODAY}"/>
+                <filter token="LICENCE" value="${plugin.licence}" />
+            </filterset>
+        </copy>
+        <tar destfile="release/${plugin.name}-${plugin.version}-src.tar.gz" compression="gzip" longfile="gnu">
+            <tarfileset dir="${tmp.plugin.dir}" prefix="${plugin}"/>
+        </tar>
+        
+        <!-- clean plugin tmp dir -->
+        <delete dir="${tmp.plugin.dir}"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Run the project                                		             -->
+    <!-- =================================================================== -->
+    <target name="run" depends="build">
+        <echo message="Running the sample application..."/>
+        <java jar="${totem.jar}" fork="true">
+            <env key="LD_LIBRARY_PATH" value="${env.LD_LIBRARY_PATH}:${run.lib.dir}"/>  
+            <jvmarg value="-Xmx512M"/>
+            <jvmarg value="-Djava.ext.dirs=${run.ext.dirs}"/>
+            <jvmarg value="-Djava.library.path=${run.lib.dir}"/>
+            <jvmarg value="-Dcom.sun.management.jmxremote"/>
+        </java>
+    </target>
+</project>

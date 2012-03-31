@@ -1,0 +1,214 @@
+TOTEM Changelog
+
+3.2 - Wed June 18, 2008
+-----------------------
+
+	* add FastIPMetric
+
+
+3.1 - Thu Mar 04, 2008
+----------------------
+
+	* add mplsCosRouting
+	* upgrade scenario schema to 1.3
+	* change load computation interface & events
+	* change LSP computation scenario events
+	* add classes of service (in domain and in lsps)
+	* add link info to the GUI
+	* change What-If gui panels
+	* add Bypass LSP computation capbility (facility backup)
+	* Upgrade to CBGP 1.4.4, add junit tests
+	* Upgrade JUnit 3.8 --> 4.4
+	* allow DAMOTE to use preemption when multiple classtypes are used
+	* bugfixes: topoEditor, MCF computation, pathsRelativeTo in scenarios,
+	SPFCache and node down, 
+
+
+3.0 - Tue Nov 06, 2007
+----------------------
+
+    * Rewrite traffic switching capabilities
+    * Remove LSP rerouting capabilities
+    * Improve CSPF for backups path computation: add parameters
+    * Traffic matrix generation from netflow: modify perl scripts, bugfixes
+    * Add a perl script to build a missing rib file
+    * Add missing rib in abilene bgp/netflow traces
+    * Upgrade CBGP version to 1.4.3
+    * CLI: change interface to create chart
+    * Improve startup script to search for java executable and set shared
+     libraries
+    * Remove lsp status from schema
+    * Rewrite synthetic traffic matrix generation interface
+    * Rewrite topology generation interface
+    * Remove lsp status from topology schema
+    * GUI:
+      - Add topology editor
+      - Add synthetic traffic matrix generation capability
+      - Add holding preemption level column
+      - In SAMTE, ask for LSP suppression
+      - Add buttons to expand/collapse events in scenario executor
+      - fix bugs in traffic matrix generation from netflow
+    * bugfixes: traffic matrix generation from netflow, backup lsps, MCF,
+	hybrid strategies,... 
+
+2.4 - Mon Jul 09, 2007
+----------------------
+
+    * Improve IGPWO (tabu search works faster, bugfixes, works on BGPAware
+    topologies)
+    * Add BGPAwareIGPWO implementation
+    * Add CPLEX MCNF
+    * Add a specific ant task to build plugins
+    * Interval chart: Add a category for > 100%
+    * Implement LSP reroute methods in case of a resource failure
+    * Event ListenToLSPsDemands renamed to StartScenarioServer
+    * Rewrite part of the intra traffic matrix generation
+    * Add diffserv example topology
+    * Improve library loading to use Totem on different plateform
+    * GUI
+      - Add MCF (Multi Commodity flow)
+      - Add List shortests path
+      - Add ECMP Analysis
+      - Add traffic matrix editing capability
+      - Add Intra TM generation (from netflow and BGP Ribs or from inter TM
+      and BGP ribs)
+      - Rewrite What-If module
+      - Improve load tables (add utilization)
+      - Upgrade to Jung 1.7.6 (totem now compile on Java 6)
+      - Table content can be exported as text
+      - Change keyboard shortcuts
+      - Add "set as default" to the matrix contextual menu
+      - Add Fortz to Network stats
+      - Possibility to close the LinkLoadComputer via contextual menu
+      - BGP contextual menus shows only when CBGP is started
+    * bugfixes: metrics and bandwidth can be 0, Fortz calculation,
+    optDivideTM, glpsol MCF model, panel visualization... 
+
+2.3 - Fri Jan 26, 2007
+----------------------
+
+    * loadable modules can be now given in preferences file
+    * add pathRelativeTo attribute to scenario
+    * improve Domain XML schema by using key references for nodes, links and priorities
+    * improve overall performance by keeping the list of incoming and
+    outcoming links of a node
+    * add overlay routing strategy
+    * bandwidth management improvement, MAM model improvement, rewrite of bandwidth sharing
+    * add CSPF backup computation capability
+    * add MIRA example topology and scenario
+    * Domains can be loaded from network
+    * GUI
+       - add socket interface
+       - add Diffserv options for LSP routing
+       - improve Diffserv utilisation
+       - add optDivideTM algorithm
+       - add options when loading a topology (remove multiple links, use
+       bandwidth sharing)
+       - add Load Tables and improve Network Statistics
+       - add columns in tabbed panes and possibility to show/hide columns
+    * bugfixes in MIRA, socket interface, backup creation event, CBGP, multiple links handling, ...
+
+2.2 - Mon Aug 28, 2006
+----------------------
+    * Improve socket interface
+    * Node down handles correctly
+    * CLI (Commmand Line Interface) improved for validation against local files
+    * added implementation of IGP Shortcut strategy
+    * upgrade scenario event interface : now it throws exceptions and returns result
+    * Bandwidth sharing can now be used correctly with DAMOTE
+    * Upgrade domain schema : units are now mandatory
+    * TrafficMatrix units are automatically converted to correspond to the domain ones
+    * GUI:
+        - improvements in CBGP GUI
+        - improvements in scenario executor
+        - upgrade Jung library
+        - better network visualisation handling (in particular, better zooming possibilities)
+        - Multiple links between nodes are now allowed in GUI
+        - detour LSP computation capability added
+        - LSP id can be given when routing
+        - Hybrid IP/MPLS methods (BasicIGPShortcut and IGPShortcut) can be used from GUI
+    * bugfixes in CBGP, BasicIGPShortcut, forceNoMultiGraph, DAMOTE, Bandwidth sharing, charts data collectors,...
+
+2.1 - Fri Apr 07, 2006
+----------------------
+
+    * Remove IntelliJ's javac2 library
+    * TOTEM is now published under the GPL (GNU General Public License) version 2.0
+    * GUI improvements:
+        - CBGP integration
+        - SAMTE integration
+        - IGP routing integration
+        - links' colors can display reservation, load or link status
+        - change default link colors
+        - fullmesh computing can now be cancelled
+        - You can choose LSP establishement order when computing fullmesh (shuffle or by increasing/decreasing bandwidth)
+        - TOTEM can now be run in "demo" mode (font size increased)
+        - better handling of the visualization of multiple domains
+    * Add interface handling for nodes
+    * Add new link types (PEERING and ACCESS)
+    * (C)SPF can now handle multigraphs (graphs which have more than one link between two nodes)
+    * new chart plotter (LoadChartPlotter)
+    * WCA scenario can generate chart
+    * New scenario event: removeTrafficMatrix
+    * ListShortestPaths event can now display paths using list of nodes or list of links
+    * LSPCreation event can compute LSPs path without establishing them
+    * LSPCreation event can add LSPs following a given route
+    * OptDivideTM
+    * bugfixes
+
+
+2.0 - Mon Jan 30, 2006
+----------------------
+    * TOTEM has now a TOTEM-base XML Schema defining common stuff for all XML
+      schemas.
+    * Some improvements to traffic matrices generation from Netflow traces:
+      sampling rate and gzipped files.
+    * Some changes to the traffic matrix schema (see the changelog inside the
+      XML Schema).
+    * the toolbox uses a listeners architecture: objects can register themselves
+      to receive notification of events : domain notifications (add Lsp, remove
+      node, ...), interDomain notifications (new domain loaded, default domain
+      changed, domain unloaded), traffic matrix notifications (new traffic
+      matrix loaded, default tm changed, tm unloaded), algorithm notifications
+      (new algo started, algo stopped).
+    * integrate new algorithms:
+        - XAMCRA from TUDelft (NL)
+        - MIRA and NEWMIRA from UNINA (IT)
+        - REOPT and LSPDimensioning from FTW (Vienna, AT)
+        - SAMTE (written by Fabian Skiv�e, RUN, BE)
+    * added multiple instances capability for DAMOTE
+    * CSPF can now compute efficiently paths from all sources to a destination
+    * add the charts creation capability from scenario, output format can be
+      EPS, PNG or JPEG.
+    * New scenario events:
+        - listShortestPaths
+        - ECMPAnalysis
+    * big GUI improvements:
+        - IGPWO integration
+        - multiple domains management
+        - multiple traffic matrices management
+        - compute LSP and fullmesh with chosen algorithm
+        - can save network visualization as PNG image
+        - can create charts
+        - can load and execute scenarios (step-by-step execution)
+        - view logging output in a console window
+    * upgrade to JFreeChart 1.0.0
+    * Lots of bugfixes
+
+
+1.1 - Wed May 18, 2005
+----------------------
+    * hierarchical XML schema to support XML element declaration in multiple
+      schema. Each method can define its own scenario events schema
+    * inter domain traffic matrix for representing prefix to prefix traffic
+    * Netflow traffic matrix generated using Netflow and BGP data
+    * multiple traffic matrix support in IGP-WO and new parameters
+    * ECMP support in the SPF
+    * GUI improvements
+    * integration of Bhandari K Disjoint Shortest path algorithm
+    * NetController is a new component which listens to the events occurring on
+      a network and which reacts in some way to these events. Ex. automatic LSP
+      rerouting strategy.
+    * upgrade to JAXB 1.0.4
+    * upgrade to Jung 1.6
+ 

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: Totem
+Implementation-Vendor: "RUN"
+Class-Path: ../../dist/totem-2.4.jar

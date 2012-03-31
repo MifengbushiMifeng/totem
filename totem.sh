@@ -5,7 +5,7 @@ TOTEM_HOMEDIR=`dirname $0`
 LIBRARYPATH=$TOTEM_HOMEDIR/lib/
 EXTDIRS=$TOTEM_HOMEDIR/lib/java
 
-JVMARGS="-d32 -Xmx512m"
+JVMARGS="-Xmx512m"
 #JVMARGS="-verbose:jni -Xcheck:jni -Xmx512m"
 
 if [ -z "$JAVA_HOME" ]; then
@@ -15,12 +15,12 @@ else
 fi
 
 if [ ! -f "$JAVA" ]; then
-    echo "Java executable not found ($JAVA). Abording."
+    echo "Java executable not found ($JAVA). Aborting."
     exit 0
 fi
 
 if [ ! -x "$JAVA" ]; then 
-    echo "Java executable not found ($JAVA). (Not executable). Abording."
+    echo "Java executable not found ($JAVA). (Not executable). Aborting."
     exit 0
 fi
 

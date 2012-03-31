@@ -1,6 +1,6 @@
 <!--
-    JAXB binding declarations file for FTW-Scenario-v1_0.xsd.
-    Author: Jean Lepropre (2005).
+    JAXB binding declarations file for ExternalRouting-Scenario-v0_1.xsd.
+    Author     : Hendrik van Antwerpen
     TOTEM Project.
 -->
 
@@ -8,25 +8,21 @@
               xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
               xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
- <jxb:bindings schemaLocation="FTW-Scenario-v1_0.xsd" node="/xs:schema">
+ <jxb:bindings schemaLocation="ExternalRouting-Scenario-v0_1.xsd" node="/xs:schema">
 
   <jxb:globalBindings choiceContentProperty="false"
 		      		  typesafeEnumBase="xs:string"
 		      		  generateIsSetMethod="true"/>
   
   <jxb:schemaBindings>
-   <jxb:package name="at.ftw.scenario.model.jaxb"/>
+   <jxb:package name="nl.tudelft.repository.externalRouting.scenario.model.jaxb"/>
   </jxb:schemaBindings>
 
   <!-- Tell JAXB to create instances of our own classes instead of the impl generated classes. -->
   
-  <jxb:bindings node="//xs:element[@name='FTWReopt']">
-     <jxb:class implClass="at.ftw.scenario.model.FTWReopt"/>
+  <jxb:bindings node="//xs:element[@name='computeExternalRouting']">
+     <jxb:class implClass="nl.tudelft.repository.externalRouting.scenario.model.ComputeExternalRouting"/>
   </jxb:bindings>
   
-  <jxb:bindings node="//xs:element[@name='LSPDimensioning']">
-     <jxb:class implClass="at.ftw.scenario.model.LSPDimensioning"/>
-  </jxb:bindings>
-
  </jxb:bindings>
 </jxb:bindings>

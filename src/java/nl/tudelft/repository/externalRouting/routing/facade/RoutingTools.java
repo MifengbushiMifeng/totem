@@ -15,6 +15,7 @@ import be.ac.ulg.montefiore.run.totem.domain.model.impl.PathImpl;
 import be.ac.ulg.montefiore.run.totem.domain.persistence.DomainFactory;
 import be.ac.ulg.montefiore.run.totem.trafficMatrix.exception.InvalidTrafficMatrixException;
 import be.ac.ulg.montefiore.run.totem.trafficMatrix.exception.LinkLoadComputerAlreadyExistsException;
+import be.ac.ulg.montefiore.run.totem.trafficMatrix.exception.LinkLoadComputerIdException;
 import be.ac.ulg.montefiore.run.totem.trafficMatrix.facade.LinkLoadComputerManager;
 import be.ac.ulg.montefiore.run.totem.trafficMatrix.facade.TrafficMatrixManager;
 import be.ac.ulg.montefiore.run.totem.trafficMatrix.model.LinkLoadComputer;
@@ -54,7 +55,7 @@ public class RoutingTools {
 
             LinkLoadComputer llc = new AbstractLinkLoadComputer(domain) {
                 SettableIPLoadData data = new SettableIPLoadData(domain);
-
+                
                 @Override
                 public void recompute() {
                     data.clear();
@@ -101,8 +102,12 @@ public class RoutingTools {
                     return oldData;
                 }
             };
+            try {
+                LinkLoadComputerManager.getInstance().addLinkLoadComputer(llc,true,name);
+            } catch (LinkLoadComputerIdException ex) {
+                logger.warn(ex);
+            }
             llc.recompute();
-            LinkLoadComputerManager.getInstance().addLinkLoadComputer(llc);
             if (er.isSetLsps()) {
                 for (Lsp lsp : (List<Lsp>) er.getLsps().getLsp()) {
                     Path path = new PathImpl(domain);

@@ -1,0 +1,71 @@
+#!/bin/bash
+
+SCRIPTDIR="`dirname $0`"
+
+rm -f routing-*-results.xml scenario.xml totem-info.log* TM*-topo-*.xml results.csv
+if [ "$1" == "clean" ]; then
+    exit 0
+fi
+
+if [ ! -f experiment.txt ]; then
+    echo "No experiment.txt found."
+    echo "Make one with 'echo <count> <mean1> <stddev1> <mean2> <stddev2> <coinflip> > experiment.txt'"
+    exit 1
+fi
+if [ ! -f network.xml ]; then
+    echo "No network.xml found."
+    exit 1
+fi
+
+if ! ls routing-*-results.txt >&/dev/null; then
+    echo "No routing-ALGORITHMHERE-results.txt found."
+    exit 1
+fi
+
+cat >scenario.xml <<EOF
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<scenario
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://jaxb.model.scenario.externalRouting.repository.tudelft.nl"
+    xmlns="http://jaxb.model.scenario.totem.run.montefiore.ulg.ac.be">
+    <loadDomain file="network.xml" removeMultipleLinks="true" defaultDomain="true"/>
+    <trafficMatrixGeneration type="Random">
+EOF
+
+echo "<param name=\"trafficDistribution\">Bimodal</param>" >>scenario.xml
+echo "<param name=\"bimodalMean1\">`cat experiment.txt | awk '{print $2}'`</param>" >>scenario.xml
+echo "<param name=\"bimodalStddev1\">`cat experiment.txt | awk '{print $3}'`</param>" >>scenario.xml
+echo "<param name=\"bimodalMean2\">`cat experiment.txt | awk '{print $4}'`</param>" >>scenario.xml
+echo "<param name=\"bimodalStddev2\">`cat experiment.txt | awk '{print $5}'`</param>" >>scenario.xml
+echo "<param name=\"bimodalCoinFlip\">`cat experiment.txt | awk '{print $6}'`</param>" >>scenario.xml
+echo "</trafficMatrixGeneration>" >>scenario.xml
+
+HEADER1=""
+HEADER2=""
+for routing in routing-*-results.txt; do
+    ALGO="`echo $routing | sed -e 's/routing-\(.*\)-results\.txt$/\1/' `"
+    HEADER1="$HEADER1$ALGO,,,"
+    HEADER2="${HEADER2}MAX,MEAN,STD,"
+    XML="routing-$ALGO-results.xml"
+    $SCRIPTDIR/convert-resulttxt-to-xml $routing "$XML"
+    echo "<ext:loadExternalRouting routingFile=\"$XML\" llcId=\"$ALGO\" />" >>scenario.xml
+    echo "<showLinkLoad perLink=\"false\" llcId=\"$ALGO\" />" >>scenario.xml
+done
+
+cat >>scenario.xml <<EOF
+</scenario>
+EOF
+
+CNT=`cat experiment.txt | awk '{print $1}'`
+echo -n "Running experiment (${CNT}x) "
+
+echo $HEADER1 >results.csv
+echo $HEADER2 >>results.csv
+for i in `seq $CNT`; do
+    echo -n "."
+    $SCRIPTDIR/../totem.sh -s scenario.xml | egrep '^(MAX|MEAN|STD)' | awk '{print $5}' | awk '{printf("%s%s", $0, (","))}' >>results.csv
+    echo >>results.csv
+done
+
+echo
+echo "The results are written to: results.csv"

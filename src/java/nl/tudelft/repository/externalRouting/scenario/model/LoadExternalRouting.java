@@ -4,6 +4,8 @@ import be.ac.ulg.montefiore.run.totem.domain.facade.InterDomainManager;
 import be.ac.ulg.montefiore.run.totem.scenario.exception.EventExecutionException;
 import be.ac.ulg.montefiore.run.totem.scenario.model.Event;
 import be.ac.ulg.montefiore.run.totem.scenario.model.EventResult;
+import be.ac.ulg.montefiore.run.totem.trafficMatrix.exception.InvalidTrafficMatrixException;
+import be.ac.ulg.montefiore.run.totem.trafficMatrix.facade.TrafficMatrixManager;
 import nl.tudelft.repository.externalRouting.routing.facade.RoutingTools;
 import nl.tudelft.repository.externalRouting.routing.model.jaxb.ExternalRouting;
 import nl.tudelft.repository.externalRouting.routing.persistence.RoutingFactory;
@@ -24,9 +26,15 @@ public class LoadExternalRouting extends LoadExternalRoutingImpl implements Even
     @Override
     public EventResult action() throws EventExecutionException {
         int asId = isSetASID() ? getASID() : InterDomainManager.getInstance().getDefaultDomain().getASID();
+        int tmId;
+        try {
+            tmId = TrafficMatrixManager.getInstance().getDefaultTrafficMatrixID(asId);
+        } catch (InvalidTrafficMatrixException ex) {
+            throw new EventExecutionException(ex);
+        }
         String fileName = getRoutingFile();
         ExternalRouting r = RoutingFactory.loadExternalRouting(fileName);
-        RoutingTools.applyExternalRouting(getLlcId(), asId, r);
+        RoutingTools.applyExternalRouting(getLlcId(), asId, tmId, r);
         return new EventResult();
     }
     

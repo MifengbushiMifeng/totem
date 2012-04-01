@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+open (IN, "<$ARGV[0]") or die("No input");
+open (OUT, ">$ARGV[1]") or die("No output");
+
+print OUT "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
+print OUT "<ExternalRouting\n";
+print OUT "   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n";
+print OUT "   xmlns=\"http://jaxb.model.routing.externalRouting.repository.tudelft.nl\">\n";
+print OUT "   <routing>\n";
+
+while (<IN>) {
+    my $line = $_;
+    if ( $_ =~ /f_(\w+),(\w+)_\(a_(\w+)-(\w+)\) ([0-9]+(\.[0-9]+)?)/ ) {
+        my $flowSrc = $1;
+        my $flowDst = $2;
+        my $linkSrc = $3;
+        my $linkDst = $4;
+        my $util = $5;
+        print OUT "<flowValue>\n";
+        print OUT "<flow><src>$flowSrc</src><dst>$flowDst</dst></flow>\n";
+        print OUT "<link><src>$linkSrc</src><dst>$linkDst</dst></link>\n";
+        print OUT "<util>$util</util>\n";
+        print OUT "</flowValue>\n";
+    }
+}
+
+print OUT "    </routing>\n";
+print OUT "</ExternalRouting>\n";
+
+close(IN);
+close(OUT);

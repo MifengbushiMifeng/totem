@@ -21,7 +21,18 @@
             <xs:complexContent>
                 <xs:extension base="ASTMEventType">
                     <xs:attribute name="cmd" type="xs:string" use="required" />
-                    <xs:attribute name="args" type="xs:string" use="required" />
+                    <xs:attribute name="llcId" type="xs:string" use="optional"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="loadExternalRouting" substitutionGroup="event">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ASTMEventType">
+                    <xs:attribute name="routingFile" type="xs:string" use="required" />
+                    <xs:attribute name="llcId" type="xs:string" use="optional"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

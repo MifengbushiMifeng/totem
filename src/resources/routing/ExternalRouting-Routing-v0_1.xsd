@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+    Created on : March 31, 2012
+    Author     : Hendrik van Antwerpen
+    Description: Scenario file for general external routing computers
+    TOTEM Project.
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://jaxb.model.routing.externalRouting.repository.tudelft.nl"
+           xmlns="http://jaxb.model.routing.externalRouting.repository.tudelft.nl"
+           elementFormDefault="qualified">
+
+	<xs:include schemaLocation="http://totem.run.montefiore.ulg.ac.be/Schema/TOTEM-base-v1_0.xsd"/>
+
+    <xs:element name="ExternalRouting">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="routing" type="routing" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="lsps" type="lsps" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="routing">
+        <xs:sequence>
+            <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="route">
+        <xs:sequence>
+            <xs:element name="src" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="dst" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:choice>
+                <xs:element name="load" type="xs:float" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="util" type="xs:float" minOccurs="1" maxOccurs="1"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="lsps">
+        <xs:sequence>
+            <xs:element name="lsp" type="lsp" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="lsp">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reservation" type="xs:float" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="path" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="node" type="xs:string" minOccurs="2" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

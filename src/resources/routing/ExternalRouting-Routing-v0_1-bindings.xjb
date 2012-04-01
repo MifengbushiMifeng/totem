@@ -1,0 +1,38 @@
+<!--
+    JAXB binding declarations file for ExternalRouting-Scenario-v0_1.xsd.
+    Author     : Hendrik van Antwerpen
+    TOTEM Project.
+-->
+
+<jxb:bindings version="1.0"
+              xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+ <jxb:bindings schemaLocation="ExternalRouting-Routing-v0_1.xsd" node="/xs:schema">
+
+  <jxb:globalBindings choiceContentProperty="false"
+		      		  typesafeEnumBase="xs:string"
+		      		  generateIsSetMethod="true"/>
+  
+  <jxb:schemaBindings>
+   <jxb:package name="nl.tudelft.repository.externalRouting.routing.model.jaxb"/>
+  </jxb:schemaBindings>
+  
+  <jxb:bindings node="//xs:complexType[@name='routing']">
+    <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.Routing"/>
+  </jxb:bindings>
+  <jxb:bindings node="//xs:complexType[@name='route']">
+    <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.Route"/>
+  </jxb:bindings>
+  <jxb:bindings node="//xs:complexType[@name='lsps']">
+    <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.Lsps"/>
+  </jxb:bindings>
+  <jxb:bindings node="//xs:complexType[@name='lsp']">
+    <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.Lsp"/>
+  </jxb:bindings>
+  <jxb:bindings node="//xs:element[@name='ExternalRouting']">
+    <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.ExternalRouting"/>
+  </jxb:bindings>
+  
+ </jxb:bindings>
+</jxb:bindings>

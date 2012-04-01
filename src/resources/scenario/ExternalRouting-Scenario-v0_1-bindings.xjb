@@ -23,6 +23,9 @@
   <jxb:bindings node="//xs:element[@name='computeExternalRouting']">
      <jxb:class implClass="nl.tudelft.repository.externalRouting.scenario.model.ComputeExternalRouting"/>
   </jxb:bindings>
-  
+  <jxb:bindings node="//xs:element[@name='loadExternalRouting']">
+     <jxb:class implClass="nl.tudelft.repository.externalRouting.scenario.model.LoadExternalRouting"/>
+  </jxb:bindings>
+    
  </jxb:bindings>
 </jxb:bindings>

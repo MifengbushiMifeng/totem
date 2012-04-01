@@ -113,7 +113,6 @@ public class SocketClient {
             //marshaller.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setProperty(MarshallerImpl.XMLDECLARATION, Boolean.FALSE);
-            //marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, PreferenceManager.getInstance().getPrefs().get("SCENARIO-SCHEMA-LOCATION", "http://jaxb.model.scenario.totem.run.montefiore.ulg.ac.be http://totem.run.montefiore.ulg.ac.be/Schema/Scenario-v1_1.xsd http://jaxb.model.scenario.totem.ingi.ucl.ac.be http://totem.run.montefiore.ulg.ac.be/Schema/CBGP-Scenario-v1_0.xsd"));
 
             //start the receiver
             receiver = new Thread(new ClientReceiver(scenario.getEvent().size()));

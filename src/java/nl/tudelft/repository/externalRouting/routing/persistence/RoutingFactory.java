@@ -47,7 +47,6 @@ public class RoutingFactory {
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
-            m.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, PreferenceManager.getInstance().getPrefs().get("ROUTING-SCHEMA-LOCATION", "") );
             m.marshal(r, new FileWriter(fileName));
         } catch (IOException ex) {
             logger.warn(ex);

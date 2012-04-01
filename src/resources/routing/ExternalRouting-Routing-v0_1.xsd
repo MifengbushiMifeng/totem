@@ -26,19 +26,30 @@
 
     <xs:complexType name="routing">
         <xs:sequence>
-            <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="flowValue" type="flowValue" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
 
-    <xs:complexType name="route">
+    <xs:complexType name="flowValue">
         <xs:sequence>
-            <xs:element name="src" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="dst" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:choice>
-                <xs:element name="load" type="xs:float" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="util" type="xs:float" minOccurs="1" maxOccurs="1"/>
-            </xs:choice>
+            <xs:element name="flow" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="src" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="dst" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="link" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="src" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="dst" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="util" type="xs:float" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

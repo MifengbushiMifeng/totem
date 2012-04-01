@@ -21,8 +21,8 @@
   <jxb:bindings node="//xs:complexType[@name='routing']">
     <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.Routing"/>
   </jxb:bindings>
-  <jxb:bindings node="//xs:complexType[@name='route']">
-    <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.Route"/>
+  <jxb:bindings node="//xs:complexType[@name='flowValue']">
+    <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.FlowValue"/>
   </jxb:bindings>
   <jxb:bindings node="//xs:complexType[@name='lsps']">
     <jxb:class implClass="nl.tudelft.repository.externalRouting.routing.model.Lsps"/>

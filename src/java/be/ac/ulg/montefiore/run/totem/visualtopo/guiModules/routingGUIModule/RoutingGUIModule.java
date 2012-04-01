@@ -56,9 +56,14 @@ import be.ac.ucl.ingi.totem.repository.guiComponents.BGPInfo;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.io.IOException;
+import nl.tudelft.repository.externalRouting.routing.facade.ExternalRoutingException;
+import nl.tudelft.repository.externalRouting.routing.facade.RoutingTools;
+import nl.tudelft.repository.externalRouting.routing.model.jaxb.ExternalRouting;
+import nl.tudelft.repository.externalRouting.routing.persistence.RoutingFactory;
 
 import org.apache.log4j.Logger;
 
@@ -232,6 +237,14 @@ public class RoutingGUIModule extends AbstractGUIModule {
         menuItem.addActionListener(new TrafficSwitchingActionListener());
         menu.add(menuItem);
 
+        menu.addSeparator();
+        menuItem = new JMenuItem("Compute External Routing & Lsps...");
+        menuItem.addActionListener(new ComputeExternalListener());
+        menu.add(menuItem);
+        menuItem = new JMenuItem("Load External Routing & Lsps...");
+        menuItem.addActionListener(new LoadExternalListener());
+        menu.add(menuItem);
+        
         return menu;
     }
 
@@ -872,7 +885,52 @@ public class RoutingGUIModule extends AbstractGUIModule {
         }
     }
 
+    private class LoadExternalListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (manager.getCurrentDomain() != null) {
+               final JFileChooser fc = new JFileChooser();
+               int ret = fc.showOpenDialog(mainWindow);
+               if ( ret == JFileChooser.APPROVE_OPTION ) {
+                  File selectedFile = fc.getSelectedFile();
+                  Domain domain = GUIManager.getInstance().getCurrentDomain();
+                  ExternalRouting routing = RoutingFactory.loadExternalRouting(selectedFile);
+                  int asId = domain.getASID();
+                  int tmId;
+                    try {
+                        tmId = TrafficMatrixManager.getInstance().getDefaultTrafficMatrixID(asId);
+                        RoutingTools.applyExternalRouting(null, asId, tmId, routing);
+                    } catch (InvalidTrafficMatrixException ex) {
+                        logger.warn(ex);
+                    }
+               }
+            } else if (manager.getCurrentDomain() == null)
+                mainWindow.errorMessage("A domain must be loaded to perform this action.");
+            else mainWindow.errorMessage("A Traffic Matrix must be loaded to perform this action.");
+        }
+    }
 
+    private class ComputeExternalListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (manager.getCurrentDomain() != null) {
+               String cmd = JOptionPane.showInputDialog(mainWindow, "Give command to run:");
+               if ( !cmd.isEmpty() ) {
+                    try {
+                        int asId = GUIManager.getInstance().getCurrentDomain().getASID();
+                        int tmId = TrafficMatrixManager.getInstance().getDefaultTrafficMatrixID(asId);                  
+                        GUIManager.getInstance().getManagedMatrices().iterator().next();
+                        ExternalRouting routing = RoutingTools.execExternalCommand(cmd, asId, tmId);
+                        RoutingTools.applyExternalRouting(null, asId, tmId, routing);
+                    } catch (ExternalRoutingException ex) {
+                        logger.warn(ex);
+                    } catch (InvalidTrafficMatrixException ex) {
+                        logger.warn(ex);
+                    }
+               }
+            } else if (manager.getCurrentDomain() == null)
+                mainWindow.errorMessage("A domain must be loaded to perform this action.");
+            else mainWindow.errorMessage("A Traffic Matrix must be loaded to perform this action.");
+        }
+    }
 
     /**
      * A class to add an Lsp to the domain. This class shows a window that will ask for

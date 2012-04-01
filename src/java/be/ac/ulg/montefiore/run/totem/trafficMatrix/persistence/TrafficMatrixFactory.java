@@ -193,7 +193,6 @@ public class TrafficMatrixFactory {
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
-            m.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, "http://totem.run.montefiore.ulg.ac.be/Schema/TrafficMatrix-v1_2.xsd");
             m.marshal(tmFile, new FileWriter(fileName));
         }
         catch(JAXBException e) {

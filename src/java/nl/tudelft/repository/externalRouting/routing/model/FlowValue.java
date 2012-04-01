@@ -4,12 +4,12 @@
  */
 package nl.tudelft.repository.externalRouting.routing.model;
 
-import nl.tudelft.repository.externalRouting.routing.model.jaxb.impl.RouteImpl;
+import nl.tudelft.repository.externalRouting.routing.model.jaxb.impl.FlowValueImpl;
 
 /**
  *
  * @author hendrik
  */
-public class Route extends RouteImpl {
+public class FlowValue extends FlowValueImpl {
     
 }

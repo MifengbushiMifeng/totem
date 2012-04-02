@@ -32,24 +32,26 @@ cat >scenario.xml <<EOF
     <trafficMatrixGeneration type="Random">
 EOF
 
-echo "<param name=\"trafficDistribution\">Bimodal</param>" >>scenario.xml
-echo "<param name=\"bimodalMean1\">`cat experiment.txt | awk '{print $2}'`</param>" >>scenario.xml
-echo "<param name=\"bimodalStddev1\">`cat experiment.txt | awk '{print $3}'`</param>" >>scenario.xml
-echo "<param name=\"bimodalMean2\">`cat experiment.txt | awk '{print $4}'`</param>" >>scenario.xml
-echo "<param name=\"bimodalStddev2\">`cat experiment.txt | awk '{print $5}'`</param>" >>scenario.xml
-echo "<param name=\"bimodalCoinFlip\">`cat experiment.txt | awk '{print $6}'`</param>" >>scenario.xml
-echo "</trafficMatrixGeneration>" >>scenario.xml
+echo "        <param name=\"trafficDistribution\">Bimodal</param>" >>scenario.xml
+echo "        <param name=\"bimodalMean1\">`cat experiment.txt | awk '{print $2}'`</param>" >>scenario.xml
+echo "        <param name=\"bimodalStddev1\">`cat experiment.txt | awk '{print $3}'`</param>" >>scenario.xml
+echo "        <param name=\"bimodalMean2\">`cat experiment.txt | awk '{print $4}'`</param>" >>scenario.xml
+echo "        <param name=\"bimodalStddev2\">`cat experiment.txt | awk '{print $5}'`</param>" >>scenario.xml
+echo "        <param name=\"bimodalCoinFlip\">`cat experiment.txt | awk '{print $6}'`</param>" >>scenario.xml
+echo "    </trafficMatrixGeneration>" >>scenario.xml
+echo "    <computeMCF runGLPSOL=\"true\" llcId=\"mcf\"/>" >>scenario.xml
+echo "    <showLinkLoad perLink=\"false\" llcId=\"mcf\"/>" >>scenario.xml
 
-HEADER1=""
-HEADER2=""
+HEADER1="MCF,,,"
+HEADER2="MAX,MEAN,STD,"
 for routing in routing-*-results.txt; do
     ALGO="`echo $routing | sed -e 's/routing-\(.*\)-results\.txt$/\1/' `"
     HEADER1="$HEADER1$ALGO,,,"
     HEADER2="${HEADER2}MAX,MEAN,STD,"
     XML="routing-$ALGO-results.xml"
     $SCRIPTDIR/convert-resulttxt-to-xml $routing "$XML"
-    echo "<ext:loadExternalRouting routingFile=\"$XML\" llcId=\"$ALGO\" />" >>scenario.xml
-    echo "<showLinkLoad perLink=\"false\" llcId=\"$ALGO\" />" >>scenario.xml
+    echo "    <ext:loadExternalRouting routingFile=\"$XML\" llcId=\"$ALGO\" />" >>scenario.xml
+    echo "    <showLinkLoad perLink=\"false\" llcId=\"$ALGO\" />" >>scenario.xml
 done
 
 cat >>scenario.xml <<EOF

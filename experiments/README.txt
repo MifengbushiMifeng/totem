@@ -7,8 +7,8 @@ How to create an experiment:
  * create or copy a file 'network.xml'
    $ cp /some/path/to/someDomain.xml network.xml
 
- * make sure the result files are there as 'results-ALGONAME-results.txt'
-   $ cp /some/path/to/som_results_file.txt results-ALGONAME-results.txt
+ * make sure the result files are there as 'routing-ALGONAME-results.txt'
+   $ cp /some/path/to/som_results_file.txt routing-ALGONAME-results.txt
  
  * create the experiment description (<numberOfTimes> <mean1> <stddev1> <mean2> <stddev2> <coinflip>)
    $ echo 100 100.0 50.0 10.0 10.0 0.8 >experiment.txt

@@ -51,7 +51,7 @@ public class RoutingTools {
             Domain domain = InterDomainManager.getInstance().getDomain(asId);
             final TrafficMatrix tm = TrafficMatrixManager.getInstance().getTrafficMatrix(asId, tmId);
             final String name = (llcId != null && !llcId.isEmpty()) ?
-                    llcId : LinkLoadComputerManager.getInstance().generateId(domain);
+                    llcId : LinkLoadComputerManager.getInstance().generateId(domain, "EXT");
 
             LinkLoadComputer llc = new AbstractLinkLoadComputer(domain) {
                 SettableIPLoadData data = new SettableIPLoadData(domain);

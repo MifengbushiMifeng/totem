@@ -314,7 +314,7 @@ public class MultiCommodityFlow extends AbstractLinkLoadComputer{
                         //}
                     }
                 }
-                br.write(" V" + i + " -" + totalBw);
+                br.write(" V" + i + (-totalBw) );
                 if (i < nbNodes-1)
                     br.write("\n");
             }
